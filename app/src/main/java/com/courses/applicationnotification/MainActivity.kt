@@ -1,10 +1,11 @@
 package com.courses.applicationnotification
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import com.google.firebase.iid.FirebaseInstanceId
+import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +20,16 @@ class MainActivity : AppCompatActivity() {
             this.showNotification("1234", "bootcamp Android", "Kotlin Android curso")
         }
 
-        Log.i("**newToken", FirebaseInstanceId.getInstance().token.toString())
+        FirebaseMessaging.getInstance().token
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w("**newToken", "Fetching FCM registration token failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new FCM registration token
+                val token = task.result
+                Log.i("**newToken", token)
+            })
     }
 }
